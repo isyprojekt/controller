@@ -1,5 +1,6 @@
 import face_recognition
 import cv2
+import zmq
 import numpy as np
 
 # This is a demo of running face recognition on live video from your webcam. It's a little more complicated than the
@@ -19,6 +20,10 @@ face_locations = []
 face_encodings = []
 face_names = []
 process_this_frame = True
+
+context = zmq.Context()
+pub = context.socket(zmq.PUB)
+pub.bind("tcp://127.0.0.1:5555")
 
 while True:
     # Grab a single frame of video
@@ -47,12 +52,20 @@ while True:
 
 
     # Display the results
+
+    # TODO only use one face (Annika)
     for (top, right, bottom, left), name in zip(face_locations, face_names):
         # Scale back up face locations since the frame we detected in was scaled to 1/4 size
         top *= 4
         right *= 4
         bottom *= 4
         left *= 4
+
+        # TODO calculate relative distance for center point (x,y) in range 0-1 (Kevin)
+        print(bottom - top, right - left)
+
+        # TODO send 2 floats (b"0.32423,0.105939") with TOPIC (Leo)
+        pub.send(b"%i,%i,%i,%i" % (top, right, bottom, left))
 
         # Draw a box around the face
         cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
