@@ -22,6 +22,7 @@ print(width, height)
 face_locations = []
 face_encodings = []
 face_names = []
+
 process_this_frame = True
 
 context = zmq.Context()
