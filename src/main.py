@@ -14,6 +14,9 @@ import numpy as np
 
 # Get a reference to webcam #0 (the default one)
 video_capture = cv2.VideoCapture(0)
+width = video_capture.get(cv2.CAP_PROP_FRAME_WIDTH)
+height = video_capture.get(cv2.CAP_PROP_FRAME_HEIGHT)
+print(width, height)
 
 # Initialize some variables
 face_locations = []
@@ -84,4 +87,5 @@ while True:
 
 # Release handle to the webcam
 video_capture.release()
+pub.close()
 cv2.destroyAllWindows()
