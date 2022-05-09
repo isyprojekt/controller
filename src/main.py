@@ -22,7 +22,6 @@ print(width, height)
 face_locations = []
 face_encodings = []
 face_names = []
-
 process_this_frame = True
 
 context = zmq.Context()
@@ -66,7 +65,15 @@ while True:
         left *= 4
 
         # TODO calculate relative distance for center point (x,y) in range 0-1 (Kevin)
-        print(bottom - top, right - left)
+        #print(bottom - top, right - left)
+
+        #Get center point of frame
+        centerX = right - left
+        centerY = bottom - top
+
+        #transform center point coords to relative position in range 0-1
+        relPosX = centerY / width
+        relPosY = centerX / height
 
         # TODO send 2 floats (b"0.32423,0.105939") with TOPIC (Leo)
         pub.send(b"%i,%i,%i,%i" % (top, right, bottom, left))
