@@ -25,8 +25,8 @@ face_names = []
 
 process_this_frame = True
 
-context = zmq.Context()
-pub = context.socket(zmq.PUB)
+ctx = zmq.Context()
+pub = ctx.socket(zmq.PUB)
 pub.bind("tcp://127.0.0.1:5555")
 
 while True:
@@ -66,10 +66,13 @@ while True:
         left *= 4
 
         # TODO calculate relative distance for center point (x,y) in range 0-1 (Kevin)
+        x, y = 0, 0
         print(bottom - top, right - left)
 
-        # TODO send 2 floats (b"0.32423,0.105939") with TOPIC (Leo)
-        pub.send(b"%i,%i,%i,%i" % (top, right, bottom, left))
+        pub.send_json({
+            'x': x,
+            'y': y,
+        })
 
         # Draw a box around the face
         cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
