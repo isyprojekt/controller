@@ -1,5 +1,6 @@
 import face_recognition
 import cv2
+import zmq
 import numpy as np
 
 # This is a demo of running face recognition on live video from your webcam. It's a little more complicated than the
@@ -13,12 +14,20 @@ import numpy as np
 
 # Get a reference to webcam #0 (the default one)
 video_capture = cv2.VideoCapture(0)
+width = video_capture.get(cv2.CAP_PROP_FRAME_WIDTH)
+height = video_capture.get(cv2.CAP_PROP_FRAME_HEIGHT)
+print(width, height)
 
 # Initialize some variables
 face_locations = []
 face_encodings = []
 face_names = []
+
 process_this_frame = True
+
+ctx = zmq.Context()
+pub = ctx.socket(zmq.PUB)
+pub.bind("tcp://127.0.0.1:5555")
 
 while True:
     # Grab a single frame of video
@@ -47,12 +56,23 @@ while True:
 
 
     # Display the results
+
+    # TODO only use one face (Annika)
     for (top, right, bottom, left), name in zip(face_locations, face_names):
         # Scale back up face locations since the frame we detected in was scaled to 1/4 size
         top *= 4
         right *= 4
         bottom *= 4
         left *= 4
+
+        # TODO calculate relative distance for center point (x,y) in range 0-1 (Kevin)
+        x, y = 0, 0
+        print(bottom - top, right - left)
+
+        pub.send_json({
+            'x': x,
+            'y': y,
+        })
 
         # Draw a box around the face
         cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
@@ -71,4 +91,5 @@ while True:
 
 # Release handle to the webcam
 video_capture.release()
+pub.close()
 cv2.destroyAllWindows()
