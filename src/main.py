@@ -45,42 +45,28 @@ while True:
         face_locations = face_recognition.face_locations(rgb_small_frame)
         face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
 
-        face_names = []
-        for face_encoding in face_encodings:
-            # See if the face is a match for the known face(s)
-            name = "Unknown"
-
-            face_names.append(name)
-
-    # process_this_frame = not process_this_frame
-
-
     # Display the results
+    i = 0 # only one face should be recognized
+    for (top, right, bottom, left) in face_locations:
+        i += 1
+        if i == 1:
+            # Scale back up face locations since the frame we detected in was scaled to 1/4 size
+            top *= 4
+            right *= 4
+            bottom *= 4
+            left *= 4
 
-    # TODO only use one face (Annika)
-    for (top, right, bottom, left), name in zip(face_locations, face_names):
-        # Scale back up face locations since the frame we detected in was scaled to 1/4 size
-        top *= 4
-        right *= 4
-        bottom *= 4
-        left *= 4
+            # TODO calculate relative distance for center point (x,y) in range 0-1 (Kevin)
+            x, y = 0, 0
+            print(bottom - top, right - left)
 
-        # TODO calculate relative distance for center point (x,y) in range 0-1 (Kevin)
-        x, y = 0, 0
-        print(bottom - top, right - left)
+            pub.send_json({
+                'x': x,
+                'y': y,
+            })
 
-        pub.send_json({
-            'x': x,
-            'y': y,
-        })
-
-        # Draw a box around the face
-        cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
-
-        # Draw a label with a name below the face
-        # cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0, 255), cv2.FILLED)
-        # font = cv2.FONT_HERSHEY_DUPLEX
-        # cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
+            # Draw a box around the face
+            cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
 
     # Display the resulting image
     cv2.imshow('Video', frame)
