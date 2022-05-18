@@ -55,8 +55,8 @@ while True:
             left *= 4
 
             # Get center point of frame
-            centerX = right - left
-            centerY = bottom - top
+            centerX = (right + left) * 0.5
+            centerY = (bottom + top) * 0.5
 
             # transform center point coords to relative position in range 0-1
             relPosX = centerX / width
