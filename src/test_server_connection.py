@@ -1,18 +1,16 @@
 import zmq
 
-context = zmq.Context()
+ctx = zmq.Context()
 
 #  Socket to talk to server
 print("Connecting to server…")
-socket = context.socket(zmq.SUB)
-socket.connect("tcp://127.0.0.1:5555")
-socket.setsockopt(zmq.SUBSCRIBE, b'')
+sub = ctx.socket(zmq.SUB)
+sub.connect("tcp://127.0.0.1:5555")
+sub.setsockopt(zmq.CONFLATE, True)
+sub.setsockopt(zmq.SUBSCRIBE, b'')
 
 #  Do 10 requests, waiting each time for a response
-while True:
-    #  Get the reply.
-
-    message = socket.recv()
+for _ in range(10):
+    message: dict = sub.recv_json()
     print(message)
-    # message = pub.recv()
-    # print("Received reply %s [ %s ]" % (message))
+sub.close()
