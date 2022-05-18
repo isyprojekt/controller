@@ -72,8 +72,10 @@ while True:
         centerY = bottom - top
 
         #transform center point coords to relative position in range 0-1
-        relPosX = centerY / width
-        relPosY = centerX / height
+        relPosX = centerX / width
+        relPosY = centerY / height
+
+        print(relPosX, relPosY)
 
         # TODO send 2 floats (b"0.32423,0.105939") with TOPIC (Leo)
         pub.send(b"%i,%i,%i,%i" % (top, right, bottom, left))
